@@ -12,7 +12,7 @@ class Search
     https.verify_mode = OpenSSL::SSL::VERIFY_NONE
     https.verify_depth = 5
 
-    # GET https://ajax.googleapis.com/ajax/services/search/web?v=1.0&q=Paris%20Hilton&key=INSERT-YOUR-KEY'
+    # GET https://ajax.googleapis.com/ajax/services/search/web?v=1.0&q=Paris%20Hilton&key=INSERT-YOUR-KEY'  '
 
     # @todo 発言内容がRT, QTを含まないなら、-RT -QTするといい
     query = URI.encode("#{tweet} twitter.com/#{author} site:twitter.com")
