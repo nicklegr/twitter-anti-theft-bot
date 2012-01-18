@@ -16,17 +16,24 @@ class Tweet
     statuses.compact!
 
     # pp tweet
-
+    #
     # statuses.each do |e|
     #   puts e.id
     #   puts e.text
     #   puts e.created_at
     #   puts ""
     # end
-    
+
+    tweet = tweet.dup
+    sanitize!(tweet)
+
     statuses.select! do |e|
       # 短縮URLはコピペポスト時に変更されるので、URLを除外
       original_text = e.text.gsub(URI.regexp, "")
+      
+      sanitize!(original_text)
+
+      # pp tweet.unpack('U*'), original_text.unpack('U*')
 
       # 発言のマッチングルール
       # 1. botの発言が、先頭一致で元発言に完全に含まれている
@@ -51,5 +58,10 @@ class Tweet
     else
       nil
     end
+  end
+
+  def sanitize!(str)
+    # '～'は化けて'?'になったりするので、削除する
+    str.gsub!(/\u003F|\u301C/, "")
   end
 end
