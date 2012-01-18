@@ -8,12 +8,17 @@ require './search'
 require './tweet'
 require './bot'
 
+# 非公式RT 159524563724681216
+TWEET_IDS = %w!159554750113783808 159494351741927424 159479252264288256 159464165369585664 159449053569101824 159252759827324930 159237660936912897 159207461272813569!
+
 config = YAML.load_file("config.yaml")
 
 bot = Bot.new(config['bots'].first)
 
-Twitter.user_timeline(bot.target).each do |status|
-  puts '----'
+TWEET_IDS.each do |id|
+  puts "tweet #{id} ----"
+
+  status = Twitter.status(id)
 
   # 末尾のユーザ名を分離する
   ret = bot.parse_tweet(status.text)
