@@ -1,6 +1,7 @@
 #!ruby -Ku
 
 require 'tweetstream'
+require 'uri'
 
 require './search'
 require './tweet'
@@ -44,7 +45,8 @@ class Watch
       puts "#{status.user.id} #{status.user.screen_name} #{status.text}"
       pp status
 
-      text = status.text
+      # 短縮URLはコピペポスト時に変更されるので、URLを除外
+      text = status.text.gsub(URI.regexp, "")
       user_id = status.user.id
 
       # 末尾のユーザ名を分離する
