@@ -10,6 +10,15 @@ class Bot
     @oauth_token_secret = settings['oauth_token_secret']
   end
 
+  # @return 成功したら[text, author]。失敗したらnil
+  def parse_tweet(tweet)
+    if tweet.match(/(.+) (\w+)$/)
+      [$1, $2]
+    else
+      nil
+    end
+  end
+
   # 同じツイートを2度リツイートすると、
   # Twitter::Error::Forbidden(sharing is not permissable for this status (Share validations failed)) が飛ぶ
   def retweet(id)

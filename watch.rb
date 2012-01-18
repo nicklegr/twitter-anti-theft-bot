@@ -47,10 +47,9 @@ class Watch
     user_id = status.user.id
 
     # 末尾のユーザ名を分離する
-    # @todo ボットごとに処理を分けられるようにする
-    return if !text.match(/(.+) (\w+)$/)
-    text = $1
-    original_user = $2
+    ret = bot.parse_tweet(text)
+    return if !ret
+    text, original_user = ret
 
     # @todo 検索は時間がかかるので、非同期にするべき
     ids = Search.new.find_ids(text, original_user)
