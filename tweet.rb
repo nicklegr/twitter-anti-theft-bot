@@ -6,11 +6,14 @@ class Tweet
       begin
         Twitter.status(id)
       rescue Twitter::Error::NotFound
+        # puts "tweet #{id} deleted"
         nil
       end
     end
 
     statuses.compact!
+
+    # pp tweet
 
     # statuses.each do |e|
     #   puts e.id
@@ -19,7 +22,7 @@ class Tweet
     #   puts ""
     # end
 
-    statuses.delete_if do |e|
+    statuses.select! do |e|
       # 発言のマッチングルール
       # 1. botの発言が、先頭一致で元発言に完全に含まれている
       return false if !e.text.match(/^#{tweet}/)
@@ -31,6 +34,8 @@ class Tweet
       # 140 * 0.9 = 126 -> アカウント名 13文字以内
       rate = tweet.size.to_f / e.text.size
       return false if rate < 0.8
+
+      true
 
       # status.retweet_count も参考になるかも。一桁は除外するとか
     end
