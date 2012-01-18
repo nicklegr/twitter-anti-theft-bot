@@ -29,7 +29,7 @@ class Tweet
       # 140文字ジャストのツイートで、後ろを削ってアカウント名を入れたとして
       # 140 * 0.8 = 112 -> アカウント名 27文字以内
       # 140 * 0.9 = 126 -> アカウント名 13文字以内
-      rate = e.text.size.to_f / tweet.size
+      rate = tweet.size.to_f / e.text.size
       return false if rate < 0.8
 
       # status.retweet_count も参考になるかも。一桁は除外するとか
