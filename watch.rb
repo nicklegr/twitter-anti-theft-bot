@@ -35,36 +35,41 @@ class Watch
   end
 
   def on_new_status(status)
-    # followは、その人への in-reply-to や retweet も飛んでくる
-    # 本人の発言以外を除外
-    bot = @bots.find {|e| e.target_id == status.user.id}
-    return if !bot
+    begin
+      # followは、その人への in-reply-to や retweet も飛んでくる
+      # 本人の発言以外を除外
+      bot = @bots.find {|e| e.target_id == status.user.id}
+      return if !bot
 
-    puts "#{status.user.id} #{status.user.screen_name} #{status.text}"
-    pp status
+      puts "#{status.user.id} #{status.user.screen_name} #{status.text}"
+      pp status
 
-    text = status.text
-    user_id = status.user.id
+      text = status.text
+      user_id = status.user.id
 
-    # 末尾のユーザ名を分離する
-    ret = bot.parse_tweet(text)
-    return if !ret
-    text, original_user = ret
+      # 末尾のユーザ名を分離する
+      ret = bot.parse_tweet(text)
+      return if !ret
+      text, original_user = ret
 
-    # @todo 検索は時間がかかるので、非同期にするべき
-    ids = Search.new.find_ids(text, original_user)
-    if ids.size == 0
-      puts "search not found: #{text} #{original_user}"
-      return
+      # @todo 検索は時間がかかるので、非同期にするべき
+      ids = Search.new.find_ids(text, original_user)
+      if ids.size == 0
+        puts "search not found: #{text} #{original_user}"
+        return
+      end
+
+      original_id = Tweet.new.estimate_original(text, ids)
+      if !original_id
+        puts "no original found: #{text} #{original_user}"
+        return
+      end
+
+      puts "retweet original: #{text}"
+      bot.retweet(original_id)
+    rescue Twitter::Error::BadRequest => e
+      # よくあるのはRate limit
+      puts e.to_s
     end
-
-    original_id = Tweet.new.estimate_original(text, ids)
-    if !original_id
-      puts "no original found: #{text} #{original_user}"
-      return
-    end
-
-    puts "retweet original: #{text}"
-    bot.retweet(original_id)
   end
 end
