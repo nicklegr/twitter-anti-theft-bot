@@ -18,5 +18,3 @@ config['bots'].each do |bot|
 end
 
 watcher.start()
-
-# ☆1000ふぁぼツイート★は、ときどきアフィ発言が混ざる。ユーザー名が入っていないものは除外

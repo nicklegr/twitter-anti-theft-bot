@@ -32,5 +32,5 @@ class Bot
     Twitter.retweet(id)
   end
 
-  attr_reader :target_id
+  attr_reader :target, :target_id
 end
