@@ -18,12 +18,13 @@ class Search
     text = tweet[0, 45]
 
     # @todo 発言内容がRT, QTを含まないなら、-RT -QTするといい
-    query = URI.encode("#{text} twitter.com/#{author} site:twitter.com")
+    query = "#{text} twitter.com/#{author} site:twitter.com"
+    # puts query
 
-    path = "/ajax/services/search/web?v=1.0&q=#{query}"
+    path = "/ajax/services/search/web?v=1.0&q=#{URI.encode(query)}"
 
     headers = {
-      # 'Referer' => 'http://nickle.ath.cx/',
+      'Referer' => 'http://nickle.ath.cx/',
       'User-Agent' => 'mozillia'
     }
 
@@ -34,6 +35,11 @@ class Search
 
       data = JSON.parse(response.body)
       # puts JSON.pretty_generate(data)
+      
+      # @todo 例外？
+      return [] if !data
+      return [] if !data['responseData']
+      return [] if !data['responseData']['results']
 
       data['responseData']['results'].each do |entry|
         url = entry['url']
@@ -42,8 +48,7 @@ class Search
         if url.match(%r|twitter.com/(\w+)/status(es)?/(\d+)|)
           user = $1
           id = $3
-          # puts user
-          # puts id
+          # puts user, id
 
           if user == author
             ids << id
