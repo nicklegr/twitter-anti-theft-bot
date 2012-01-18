@@ -37,7 +37,8 @@ class Watch
   def on_new_status(status)
     # followは、その人への in-reply-to や retweet も飛んでくる
     # 本人の発言以外を除外
-    return if @bots.select {|e| e.target_id == status.user.id}.size == 0
+    bot = @bots.find {|e| e.target_id == status.user.id}
+    return if !bot
 
     puts "#{status.user.id} #{status.user.screen_name} #{status.text}"
     pp status
@@ -65,7 +66,6 @@ class Watch
     end
 
     puts "retweet original: #{text}"
-    bot = @bots.select{|e| e.target_id == user_id }.first
     bot.retweet(original_id)
   end
 end
