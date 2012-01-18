@@ -13,10 +13,19 @@ config = YAML.load_file("config.yaml")
 bot = Bot.new(config['bots'].first)
 
 Twitter.user_timeline(bot.target).each do |status|
-  # �����̃��[�U���𕪗�����
+  puts '----'
+
+  # 末尾のユーザ名を分離する
   ret = bot.parse_tweet(status.text)
-  next if !ret
+  if !ret
+    puts "parse_failed: #{status.text}"
+    next
+  end
+
   text, original_user = ret
+
+  # 短縮URLはコピペポスト時に変更されるので、URLを除外
+  text.gsub!(URI.regexp, "")
 
   ids = Search.new.find_ids(text, original_user)
   if ids.size == 0
@@ -30,5 +39,5 @@ Twitter.user_timeline(bot.target).each do |status|
     next
   end
 
-  puts "#{original_id}: #{text} #{original_user}"
+  # puts "#{original_id}: #{text} #{original_user}"
 end
