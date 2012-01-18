@@ -2,7 +2,15 @@
 
 class Tweet
   def estimate_original(tweet, ids)
-    statuses = ids.map do |id| Twitter.status(id) end
+    statuses = ids.map do |id|
+      begin
+        Twitter.status(id)
+      rescue Twitter::Error::NotFound
+        nil
+      end
+    end
+
+    statuses.compact!
 
     # statuses.each do |e|
     #   puts e.id
