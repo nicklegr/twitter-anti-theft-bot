@@ -7,18 +7,16 @@ require 'yaml'
 require './search'
 require './tweet'
 require './bot'
+require './watch'
 
-# pp Twitter.search("ふぁぼれよ from:patatoma -RT -QT", :lang => "ja", :locale => "ja", :rpp => 100, :page => 1) # , 
+config = YAML.load_file("config.yaml")
 
-tweet = "ふぁぼれよ"
+watcher = Watch.new(config['stream_account'])
 
-ids = Search.new.find_ids(tweet, "patatoma")
-# pp ids
+config['bots'].each do |bot|
+  watcher.add_bot(Bot.new(bot))
+end
 
-original_id = Tweet.new.estimate_original(tweet, ids)
-# pp original_id
-
-bot_settings = YAML.load_file("bots.yaml")
-Bot.new(bot_settings['bots'].first).retweet(original_id)
+watcher.start()
 
 # ☆1000ふぁぼツイート★は、ときどきアフィ発言が混ざる。ユーザー名が入っていないものは除外

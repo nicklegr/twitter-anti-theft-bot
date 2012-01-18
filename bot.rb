@@ -3,6 +3,7 @@
 class Bot
   def initialize(settings)
     @target = settings['target']
+    @target_id = settings['target_id']
     @consumer_key = settings['consumer_key']
     @consumer_secret = settings['consumer_secret']
     @oauth_token = settings['oauth_token']
@@ -21,4 +22,6 @@ class Bot
 
     Twitter.retweet(id)
   end
+
+  attr_reader :target_id
 end

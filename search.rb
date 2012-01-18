@@ -14,8 +14,11 @@ class Search
 
     # GET https://ajax.googleapis.com/ajax/services/search/web?v=1.0&q=Paris%20Hilton&key=INSERT-YOUR-KEY'  '
 
+    # 検索ワードは32語に制限されているので適当に短く
+    text = tweet[0, 45]
+
     # @todo 発言内容がRT, QTを含まないなら、-RT -QTするといい
-    query = URI.encode("#{tweet} twitter.com/#{author} site:twitter.com")
+    query = URI.encode("#{text} twitter.com/#{author} site:twitter.com")
 
     path = "/ajax/services/search/web?v=1.0&q=#{query}"
 

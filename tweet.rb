@@ -27,8 +27,11 @@ class Tweet
       # status.retweet_count も参考になるかも。一桁は除外するとか
     end
 
-    original = statuses.min_by do |e| e.created_at end
-
-    original.id
+    if statuses.size > 0
+      original = statuses.min_by do |e| e.created_at end
+      original.id
+    else
+      nil
+    end
   end
 end
