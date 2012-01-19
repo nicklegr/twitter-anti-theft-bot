@@ -31,6 +31,7 @@ class Tweet
     # statuses.each do |e|
     #   puts e.id
     #   puts e.text
+    #   puts e.user.screen_name
     #   puts e.created_at
     #   puts ""
     # end
@@ -48,17 +49,18 @@ class Tweet
 
       # 発言のマッチングルール
       # 1. botの発言が、先頭一致で元発言に完全に含まれている
-      return false if !original_text.starts_with?(tweet)
-
       # 2. 一致率が高い(発言長の差が少ない)
       #
       # 140文字ジャストのツイートで、後ろを削ってアカウント名を入れたとして
       # 140 * 0.8 = 112 -> アカウント名 27文字以内
       # 140 * 0.9 = 126 -> アカウント名 13文字以内
       rate = tweet.size.to_f / original_text.size
-      return false if rate < 0.8
 
-      true
+      if original_text.starts_with?(tweet) && rate >= 0.8
+        true
+      else
+        false
+      end
 
       # status.retweet_count も参考になるかも。一桁は除外するとか
     end
