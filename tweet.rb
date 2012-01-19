@@ -2,8 +2,18 @@
 
 require 'uri'
 
+class String
+  def starts_with?(prefix)
+    prefix = prefix.to_s
+    self[0, prefix.length] == prefix
+  end
+end
+
 class Tweet
   def estimate_original(tweet, author, ids)
+    # API節約
+    ids.sort!.uniq!
+
     statuses = ids.map do |id|
       begin
         Twitter.status(id)
@@ -38,7 +48,7 @@ class Tweet
 
       # 発言のマッチングルール
       # 1. botの発言が、先頭一致で元発言に完全に含まれている
-      return false if !original_text.match(/^#{tweet}/)
+      return false if !original_text.starts_with?(tweet)
 
       # 2. 一致率が高い(発言長の差が少ない)
       #
