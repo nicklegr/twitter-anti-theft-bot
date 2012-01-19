@@ -42,8 +42,8 @@ class Watch
       bot = @bots.find {|e| e.target_id == status.user.id}
       return if !bot
 
-      puts "#{status.user.id} #{status.user.screen_name} #{status.text}"
-      pp status
+      # puts "#{status.user.id} #{status.user.screen_name} #{status.text}"
+      # pp status
 
       # 短縮URLはコピペポスト時に変更されるので、URLを除外
       text = status.text.gsub(URI.regexp, "")
@@ -57,18 +57,18 @@ class Watch
       # @todo 検索は時間がかかるので、非同期にするべき
       ids = Search.new.find_ids(text, original_user)
       if ids.size == 0
-        puts "search not found: #{text} #{original_user}"
+        puts "#{bot.target}: search not found: #{status.id} #{original_user} #{text}"
         return
       end
 
       original_id = Tweet.new.estimate_original(text, original_user, ids)
       if !original_id
-        puts "no original found: #{text} #{original_user}"
+        puts "#{bot.target}: no original found: #{status.id} #{original_user} #{text}"
         return
       end
 
-      puts "retweet original: #{text}"
       bot.retweet(original_id)
+      puts "#{bot.target}: ok: #{status.id} -> #{original_id}"
     rescue Twitter::Error::BadRequest => e
       # よくあるのはRate limit
       puts e.to_s
