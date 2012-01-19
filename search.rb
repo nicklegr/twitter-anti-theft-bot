@@ -14,21 +14,40 @@ class Search
 
     # GET https://ajax.googleapis.com/ajax/services/search/web?v=1.0&q=Paris%20Hilton&key=INSERT-YOUR-KEY'  '
 
-    # 検索ワードは32語に制限されているので適当に短く
-    text = tweet[0, 45]
-
-    urls = Array.new
+    ids = nil
 
     https.start do |connection|
-      # @todo 発言内容がRT, QTを含まないなら、-RT -QTするといい
-      query = "#{text} twitter.com/#{author} site:twitter.com"
-      # puts query
-      urls += search(connection, query)
+      # 検索ワードは32語に制限されているので適当に短く
+      text = tweet[0, 45]
+      ids = search(connection, text, author)
 
-      query = "#{text} #{author} site:favstar.fm"
-      # puts query
-      urls += search(connection, query)
+      # 単語の途中で切れてしまうとヒットしないことがあるので、適当に長さを変えてリトライ
+      # @todo ほんとは形態素解析
+      if ids.size == 0
+        text = tweet[0, 40]
+        ids = search(connection, text, author)
+      end
+
+      if ids.size == 0
+        text = tweet[0, 35]
+        ids = search(connection, text, author)
+      end
     end
+
+    ids
+  end
+
+  def search(connection, text, author)
+    urls = Array.new
+
+    # @todo 発言内容がRT, QTを含まないなら、-RT -QTするといい
+    query = "#{text} twitter.com/#{author} site:twitter.com"
+    # puts query
+    urls += send_query(connection, query)
+
+    query = "#{text} #{author} site:favstar.fm"
+    # puts query
+    urls += send_query(connection, query)
 
     # ツイートIDを抽出
     # authorが一致しないものは弾く。不明なものはとりあえず残す
@@ -64,7 +83,7 @@ class Search
     ids
   end
 
-  def search(connection, query)
+  def send_query(connection, query)
     headers = {
       'Referer' => 'http://nickle.ath.cx/',
       'User-Agent' => 'mozillia'

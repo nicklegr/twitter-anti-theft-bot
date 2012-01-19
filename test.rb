@@ -9,7 +9,7 @@ require './tweet'
 require './bot'
 
 # 非公式RT 159524563724681216
-TWEET_IDS = %w!159449053569101824 159252759827324930!
+TWEET_IDS = %w!!
 
 config = YAML.load_file("config.yaml")
 
