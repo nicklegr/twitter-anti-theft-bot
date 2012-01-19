@@ -9,7 +9,7 @@ require './tweet'
 require './bot'
 
 # 非公式RT 159524563724681216
-TWEET_IDS = %w!159554750113783808 159494351741927424 159479252264288256 159464165369585664 159449053569101824 159252759827324930 159237660936912897 159207461272813569 159932236353908736 159811440985903104!
+TWEET_IDS = %w!159464165369585664 159449053569101824 159252759827324930 159932236353908736 159811440985903104!
 
 config = YAML.load_file("config.yaml")
 
@@ -38,11 +38,11 @@ TWEET_IDS.each do |id|
     next
   end
 
-  original_id = Tweet.new.estimate_original(text, ids)
+  original_id = Tweet.new.estimate_original(text, original_user, ids)
   if !original_id
     puts "no original found: #{text} #{original_user}"
     next
   end
 
-  # puts "#{original_id}: #{text} #{original_user}"
+  puts "#{original_id}: #{text} #{original_user}"
 end

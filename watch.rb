@@ -61,7 +61,7 @@ class Watch
         return
       end
 
-      original_id = Tweet.new.estimate_original(text, ids)
+      original_id = Tweet.new.estimate_original(text, original_user, ids)
       if !original_id
         puts "no original found: #{text} #{original_user}"
         return

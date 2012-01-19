@@ -3,7 +3,7 @@
 require 'uri'
 
 class Tweet
-  def estimate_original(tweet, ids)
+  def estimate_original(tweet, author, ids)
     statuses = ids.map do |id|
       begin
         Twitter.status(id)
@@ -14,6 +14,7 @@ class Tweet
     end
 
     statuses.compact!
+    statuses.delete_if do |e| e.user.screen_name != author end
 
     # pp tweet
     #
