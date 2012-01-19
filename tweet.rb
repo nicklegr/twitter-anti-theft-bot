@@ -76,5 +76,8 @@ class Tweet
   def sanitize!(str)
     # '～'は化けて'?'になったりするので、削除する
     str.gsub!(/\u003F|\u301C/, "")
+
+    # 改行コードなどもコピペ時に揺れがあるので削除
+    str.gsub!(/\s+/, "")
   end
 end
