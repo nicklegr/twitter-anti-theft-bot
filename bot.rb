@@ -1,5 +1,17 @@
 #!ruby -Ku
 
+# Add a reader for retweeted_status (commit 617ebccb89)
+module Twitter
+  class Status
+    # If this status is itself a retweet, the original tweet is available here.
+    #
+    # @return [Twitter::Status]
+    def retweeted_status
+      @retweeted_status ||= self.class.new(@attrs['retweeted_status']) unless @attrs['retweeted_status'].nil?
+    end
+  end
+end
+
 class Bot
   def initialize(settings)
     @target = settings['target']
@@ -29,7 +41,24 @@ class Bot
       config.oauth_token_secret = @oauth_token_secret
     end
 
-    Twitter.retweet(id)
+    begin
+      Twitter.retweet(id)
+    rescue Twitter::Error::Forbidden => e
+      # ‚¨‚»‚ç‚­Šù‚ÉRTÏ‚İ
+
+      # RT‚ÌID‚ğ’T‚·
+      retweet_status = Twitter.retweeted_by(:count => 200).find do |status| status.retweeted_status.id == id end
+      # pp retweet_status.id
+
+      # ˆê’Uíœ
+      Twitter.status_destroy(retweet_status.id)
+
+      # Š®—¹‚ğ‘Ò‚Â
+      sleep(5)
+
+      # Ä“xRT
+      Twitter.retweet(id)
+    end
   end
 
   attr_reader :target, :target_id
