@@ -72,6 +72,9 @@ class Watch
     rescue Twitter::Error::BadRequest => e
       # よくあるのはRate limit
       puts e.to_s
+    rescue => e
+      # 不明なエラーのときも、とりあえず動き続ける
+      puts e.to_s
     end
   end
 end
