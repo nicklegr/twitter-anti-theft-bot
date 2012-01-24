@@ -59,7 +59,7 @@ class Search
         id = $3
         # puts user, id
 
-        if user == author
+        if user.downcase == author.downcase
           ids << id
         end
       end
@@ -69,7 +69,7 @@ class Search
         id = $2
         # puts user, id
 
-        if user == author
+        if user.downcase == author.downcase
           ids << id
         end
       end

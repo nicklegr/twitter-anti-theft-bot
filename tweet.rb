@@ -24,7 +24,7 @@ class Tweet
     end
 
     statuses.compact!
-    statuses.delete_if do |e| e.user.screen_name != author end
+    statuses.delete_if do |e| e.user.screen_name.downcase != author.downcase end
 
     # pp tweet
     #
