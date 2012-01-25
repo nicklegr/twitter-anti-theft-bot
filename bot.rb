@@ -47,17 +47,39 @@ class Bot
       # ‚¨‚»‚ç‚­Šù‚ÉRTÏ‚İ
 
       # RT‚ÌID‚ğ’T‚·
-      retweet_status = Twitter.retweeted_by(:count => 200).find do |status| status.retweeted_status.id == id end
-      # pp retweet_status.id
+      page = 1
+      old_retweet_id = nil
+      
+      loop do
+        retweets = Twitter.retweeted_by(:count => 200, :page => page)
+        break if retweets.nil? || retweets.empty?
 
-      # ˆê’Uíœ
-      Twitter.status_destroy(retweet_status.id)
+        old_retweet = retweets.find do |status|
+          status.retweeted_status.id == id
+        end
 
-      # Š®—¹‚ğ‘Ò‚Â
-      sleep(5)
+        if old_retweet
+          old_retweet_id = old_retweet.id
+          break
+        end
 
-      # Ä“xRT
-      Twitter.retweet(id)
+        page += 1
+      end
+      
+      if old_retweet_id
+        puts "removing old retweet (id #{old_retweet_id})"
+
+        # ˆê’Uíœ
+        Twitter.status_destroy(old_retweet_id)
+
+        # Š®—¹‚ğ‘Ò‚Â
+        sleep(5)
+
+        # Ä“xRT
+        Twitter.retweet(id)
+      else
+        puts "retweet failed: #{id}"
+      end
     end
   end
 
