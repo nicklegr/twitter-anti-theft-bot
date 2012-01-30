@@ -12,7 +12,12 @@ module Twitter
   end
 end
 
-class Bot
+# 派生クラスで下記の定義が必要。
+# 
+# def parse_tweet(tweet)
+#   @return 成功したら[text, author]。失敗したらnil
+#   authorがないツイートの場合、nilでもいい
+module Bot
   def initialize(settings)
     @target = settings['target']
     @target_id = settings['target_id']
@@ -20,15 +25,6 @@ class Bot
     @consumer_secret = settings['consumer_secret']
     @oauth_token = settings['oauth_token']
     @oauth_token_secret = settings['oauth_token_secret']
-  end
-
-  # @return 成功したら[text, author]。失敗したらnil
-  def parse_tweet(tweet)
-    if tweet.match(/(.+) (\w+)$/)
-      [$1, $2]
-    else
-      nil
-    end
   end
 
   def find_original_id(status)

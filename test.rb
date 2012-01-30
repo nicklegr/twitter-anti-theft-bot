@@ -7,6 +7,7 @@ require 'pp'
 require './search'
 require './tweet'
 require './bot'
+require './custom_bot'
 
 # 非公式RT 159524563724681216 161004300682801152
 # 鍵アカ。しかしsearch not foundは変 160672123780726784
@@ -21,8 +22,9 @@ require './bot'
 TWEET_IDS = %w!162484051633115136 162725643631591424 163103130773487617 163193727869911041 163223928389644288 163525916629286912 163541016178196480 163797707889192961!
 
 config = YAML.load_file("config.yaml")
+setting = config['bots']['1000favs']
 
-bot = Bot.new(config['bots'].first)
+bot = eval(setting['type']).new(setting)
 
 TWEET_IDS.each do |id|
   puts "tweet #{id} ----"
