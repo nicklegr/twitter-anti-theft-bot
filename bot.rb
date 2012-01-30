@@ -16,7 +16,8 @@ end
 # 
 # def parse_tweet(tweet)
 #   @return 成功したら[text, author]。失敗したらnil
-#   authorがないツイートの場合、nilでもいい
+#   authorは、無記名のツイートの場合nilでもいい
+#
 module Bot
   def initialize(settings)
     @target = settings['target']
@@ -33,7 +34,11 @@ module Bot
 
     # 末尾のユーザ名を分離する
     ret = parse_tweet(text)
-    return nil if !ret
+    if !ret
+      puts "#{@target}: parse failed: #{status.id} #{status.text}"
+      return nil
+    end
+
     text, original_user = ret
 
     # @todo 検索は時間がかかるので、非同期にするべき
