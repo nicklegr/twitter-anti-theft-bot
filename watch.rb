@@ -37,8 +37,8 @@ class Watch
 
   def on_new_status(status)
     begin
-      # follow�́A���̐l�ւ� in-reply-to �� retweet �����ł���
-      # �{�l�̔����ȊO�����O
+      # followは、その人への in-reply-to や retweet も飛んでくる
+      # 本人の発言以外を除外
       bot = @bots.find {|e| e.target_id == status.user.id}
       return if !bot
 
@@ -52,13 +52,13 @@ class Watch
         puts "#{bot.target}: ok: #{status.id} -> #{original_id}"
       end
     rescue Twitter::Error::BadRequest => e
-      # �悭����̂�Rate limit
+      # よくあるのはRate limit
       puts e.to_s
     rescue Twitter::Error::Forbidden => e
-      # ���A�J�̏ꍇ����
+      # 鍵アカの場合かな
       puts e.to_s
     rescue => e
-      # �s���ȃG���[�̂Ƃ����A�Ƃ肠��������������
+      # 不明なエラーのときも、とりあえず動き続ける
       puts e.to_s
     end
   end

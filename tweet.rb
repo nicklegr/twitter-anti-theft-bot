@@ -11,7 +11,7 @@ end
 
 class Tweet
   def estimate_original(tweet, author, ids)
-    # API�ߖ�
+    # API節約
     ids.sort!.uniq!
 
     statuses = ids.map do |id|
@@ -40,20 +40,20 @@ class Tweet
     sanitize!(tweet)
 
     statuses.select! do |e|
-      # �Z�kURL�̓R�s�y�|�X�g���ɕύX�����̂ŁAURL�����O
+      # 短縮URLはコピペポスト時に変更されるので、URLを除外
       original_text = e.text.gsub(URI.regexp, "")
       
       sanitize!(original_text)
 
       # pp tweet.unpack('U*'), original_text.unpack('U*')
 
-      # �����̃}�b�`���O���[��
-      # 1. bot�̔������A�擪��v�Ō������Ɋ��S�Ɋ܂܂�Ă���
-      # 2. ��v��������(�������̍������Ȃ�)
+      # 発言のマッチングルール
+      # 1. botの発言が、先頭一致で元発言に完全に含まれている
+      # 2. 一致率が高い(発言長の差が少ない)
       #
-      # 140�����W���X�g�̃c�C�[�g�ŁA��������ăA�J�E���g������ꂽ�Ƃ���
-      # 140 * 0.8 = 112 -> �A�J�E���g�� 27�����ȓ�
-      # 140 * 0.9 = 126 -> �A�J�E���g�� 13�����ȓ�
+      # 140文字ジャストのツイートで、後ろを削ってアカウント名を入れたとして
+      # 140 * 0.8 = 112 -> アカウント名 27文字以内
+      # 140 * 0.9 = 126 -> アカウント名 13文字以内
       rate = tweet.size.to_f / original_text.size
 
       if original_text.starts_with?(tweet) && rate >= 0.8
@@ -62,7 +62,7 @@ class Tweet
         false
       end
 
-      # status.retweet_count ���Q�l�ɂȂ邩���B�ꌅ�͏��O����Ƃ�
+      # status.retweet_count も参考になるかも。一桁は除外するとか
     end
 
     if statuses.size > 0
@@ -74,13 +74,13 @@ class Tweet
   end
 
   def sanitize!(str)
-    # '�`'�͉�����'?'�ɂȂ����肷��̂ŁA�폜����
+    # '～'は化けて'?'になったりするので、削除する
     str.gsub!(/\u003F|\u301C/, "")
 
-    # ���s�R�[�h�Ȃǂ��R�s�y���ɗh�ꂪ����̂ō폜
+    # 改行コードなどもコピペ時に揺れがあるので削除
     str.gsub!(/\s+/, "")
 
-    # �n�b�V���^�O��#�����폜���Ă���炵��
+    # ハッシュタグは#だけ削除しているらしい
     str.gsub!(/#/, "")
   end
 end

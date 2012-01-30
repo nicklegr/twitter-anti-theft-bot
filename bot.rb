@@ -12,11 +12,11 @@ module Twitter
   end
 end
 
-# ”h¶ƒNƒ‰ƒX‚Å‰º‹L‚Ì’è‹`‚ª•K—vB
+# æ´¾ç”Ÿã‚¯ãƒ©ã‚¹ã§ä¸‹è¨˜ã®å®šç¾©ãŒå¿…è¦ã€‚
 # 
 # def parse_tweet(tweet)
-#   @return ¬Œ÷‚µ‚½‚ç[text, author]B¸”s‚µ‚½‚çnil
-#   author‚ª‚È‚¢ƒcƒC[ƒg‚Ìê‡Anil‚Å‚à‚¢‚¢
+#   @return æˆåŠŸã—ãŸã‚‰[text, author]ã€‚å¤±æ•—ã—ãŸã‚‰nil
+#   authorãŒãªã„ãƒ„ã‚¤ãƒ¼ãƒˆã®å ´åˆã€nilã§ã‚‚ã„ã„
 module Bot
   def initialize(settings)
     @target = settings['target']
@@ -28,15 +28,15 @@ module Bot
   end
 
   def find_original_id(status)
-    # ’ZkURL‚ÍƒRƒsƒyƒ|ƒXƒg‚É•ÏX‚³‚ê‚é‚Ì‚ÅAURL‚ğœŠO
+    # çŸ­ç¸®URLã¯ã‚³ãƒ”ãƒšãƒã‚¹ãƒˆæ™‚ã«å¤‰æ›´ã•ã‚Œã‚‹ã®ã§ã€URLã‚’é™¤å¤–
     text = status.text.gsub(URI.regexp, "")
 
-    # ––”ö‚Ìƒ†[ƒU–¼‚ğ•ª—£‚·‚é
+    # æœ«å°¾ã®ãƒ¦ãƒ¼ã‚¶åã‚’åˆ†é›¢ã™ã‚‹
     ret = parse_tweet(text)
     return nil if !ret
     text, original_user = ret
 
-    # @todo ŒŸõ‚ÍŠÔ‚ª‚©‚©‚é‚Ì‚ÅA”ñ“¯Šú‚É‚·‚é‚×‚«
+    # @todo æ¤œç´¢ã¯æ™‚é–“ãŒã‹ã‹ã‚‹ã®ã§ã€éåŒæœŸã«ã™ã‚‹ã¹ã
     ids = Search.new.find_ids(text, original_user)
     if ids.size == 0
       puts "#{@target}: search not found: #{status.id} #{original_user} #{text}"
@@ -52,8 +52,8 @@ module Bot
     original_id
   end
 
-  # “¯‚¶ƒcƒC[ƒg‚ğ2“xƒŠƒcƒC[ƒg‚·‚é‚ÆA
-  # Twitter::Error::Forbidden(sharing is not permissable for this status (Share validations failed)) ‚ª”ò‚Ô
+  # åŒã˜ãƒ„ã‚¤ãƒ¼ãƒˆã‚’2åº¦ãƒªãƒ„ã‚¤ãƒ¼ãƒˆã™ã‚‹ã¨ã€
+  # Twitter::Error::Forbidden(sharing is not permissable for this status (Share validations failed)) ãŒé£›ã¶
   def retweet(id)
     Twitter.configure do |config|
       config.consumer_key = @consumer_key
@@ -65,9 +65,9 @@ module Bot
     begin
       Twitter.retweet(id)
     rescue Twitter::Error::Forbidden => e
-      # ‚¨‚»‚ç‚­Šù‚ÉRTÏ‚İ
+      # ãŠãã‚‰ãæ—¢ã«RTæ¸ˆã¿
 
-      # RT‚ÌID‚ğ’T‚·
+      # RTã®IDã‚’æ¢ã™
       page = 1
       old_retweet_id = nil
       
@@ -90,13 +90,13 @@ module Bot
       if old_retweet_id
         puts "removing old retweet (id #{old_retweet_id})"
 
-        # ˆê’Uíœ
+        # ä¸€æ—¦å‰Šé™¤
         Twitter.status_destroy(old_retweet_id)
 
-        # Š®—¹‚ğ‘Ò‚Â
+        # å®Œäº†ã‚’å¾…ã¤
         sleep(5)
 
-        # Ä“xRT
+        # å†åº¦RT
         Twitter.retweet(id)
       else
         puts "retweet failed: #{id}"
