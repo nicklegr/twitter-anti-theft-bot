@@ -1,5 +1,7 @@
 #!ruby -Ku
 
+# 指定したツイートIDを検索するテスト
+
 require 'twitter'
 require 'yaml'
 require 'pp'
@@ -19,20 +21,25 @@ require './custom_bot'
 
 # 対応済み。後でレグレッションテストを作る 160626812563619842 160641912154497024 161698877366484993
 
-TWEET_IDS = %w!162484051633115136 162725643631591424 163103130773487617 163193727869911041 163223928389644288 163525916629286912 163541016178196480 163797707889192961!
+TEST_VECTOR = {
+  '1000favs' => %w!162484051633115136 162725643631591424 163103130773487617 163193727869911041 163223928389644288 163525916629286912 163541016178196480 163797707889192961!,
+}
 
 config = YAML.load_file("config.yaml")
-setting = config['bots']['1000favs']
 
-bot = eval(setting['type']).new(setting)
+TEST_VECTOR.each do |bot_name, tweet_ids|
+  setting = config['bots'][bot_name]
 
-TWEET_IDS.each do |id|
-  puts "tweet #{id} ----"
+  bot = eval(setting['type']).new(setting)
 
-  status = Twitter.status(id)
+  tweet_ids.each do |id|
+    print "tweet #{id} => "
 
-  original_id = bot.find_original_id(status)
-  next if !original_id
+    status = Twitter.status(id)
 
-  puts "ok: #{original_id}"
+    original_id = bot.find_original_id(status)
+    next if !original_id
+
+    puts "ok: #{original_id}"
+  end
 end
