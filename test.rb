@@ -29,29 +29,8 @@ TWEET_IDS.each do |id|
 
   status = Twitter.status(id)
 
-  # 末尾のユーザ名を分離する
-  ret = bot.parse_tweet(status.text)
-  if !ret
-    puts "parse_failed: #{status.text}"
-    next
-  end
+  original_id = bot.find_original_id(status)
+  next if !original_id
 
-  text, original_user = ret
-
-  # 短縮URLはコピペポスト時に変更されるので、URLを除外
-  text.gsub!(URI.regexp, "")
-
-  ids = Search.new.find_ids(text, original_user)
-  if ids.size == 0
-    puts "search not found: #{text} #{original_user}"
-    next
-  end
-
-  original_id = Tweet.new.estimate_original(text, original_user, ids)
-  if !original_id
-    puts "no original found: #{text} #{original_user}"
-    next
-  end
-
-  puts "#{original_id}: #{text} #{original_user}"
+  puts "ok: #{original_id}"
 end

@@ -45,30 +45,12 @@ class Watch
       # puts "#{status.user.id} #{status.user.screen_name} #{status.text}"
       # pp status
 
-      # 短縮URLはコピペポスト時に変更されるので、URLを除外
-      text = status.text.gsub(URI.regexp, "")
-      user_id = status.user.id
+      original_id = bot.find_original_id(status)
 
-      # 末尾のユーザ名を分離する
-      ret = bot.parse_tweet(text)
-      return if !ret
-      text, original_user = ret
-
-      # @todo 検索は時間がかかるので、非同期にするべき
-      ids = Search.new.find_ids(text, original_user)
-      if ids.size == 0
-        puts "#{bot.target}: search not found: #{status.id} #{original_user} #{text}"
-        return
+      if original_id
+        bot.retweet(original_id)
+        puts "#{bot.target}: ok: #{status.id} -> #{original_id}"
       end
-
-      original_id = Tweet.new.estimate_original(text, original_user, ids)
-      if !original_id
-        puts "#{bot.target}: no original found: #{status.id} #{original_user} #{text}"
-        return
-      end
-
-      bot.retweet(original_id)
-      puts "#{bot.target}: ok: #{status.id} -> #{original_id}"
     rescue Twitter::Error::BadRequest => e
       # よくあるのはRate limit
       puts e.to_s

@@ -31,6 +31,31 @@ class Bot
     end
   end
 
+  def find_original_id(status)
+    # 短縮URLはコピペポスト時に変更されるので、URLを除外
+    text = status.text.gsub(URI.regexp, "")
+
+    # 末尾のユーザ名を分離する
+    ret = parse_tweet(text)
+    return nil if !ret
+    text, original_user = ret
+
+    # @todo 検索は時間がかかるので、非同期にするべき
+    ids = Search.new.find_ids(text, original_user)
+    if ids.size == 0
+      puts "#{@target}: search not found: #{status.id} #{original_user} #{text}"
+      return nil
+    end
+
+    original_id = Tweet.new.estimate_original(text, original_user, ids)
+    if !original_id
+      puts "#{@target}: no original found: #{status.id} #{original_user} #{text}"
+      return nil
+    end
+    
+    original_id
+  end
+
   # 同じツイートを2度リツイートすると、
   # Twitter::Error::Forbidden(sharing is not permissable for this status (Share validations failed)) が飛ぶ
   def retweet(id)
