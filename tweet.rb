@@ -20,6 +20,13 @@ class Tweet
       rescue Twitter::Error::NotFound
         # puts "tweet #{id} deleted"
         nil
+      rescue Twitter::Error::Forbidden
+        # puts "tweet #{id} is from protected account"
+        nil
+      rescue => e
+        # とりあえず落ちないように
+        puts "tweet #{id}: #{e}"
+        nil
       end
     end
 
