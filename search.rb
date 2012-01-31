@@ -4,9 +4,21 @@ require './search_engine'
 
 class Search
   def find_ids(tweet, author)
+    ids = find_ids_in(GoogleAjaxSearch, tweet, author)
+
+    # 見つからない場合はカスタム検索でリトライ
+    # こっちはQuotaが厳しいので、できるだけ使わないようにする
+    if ids.size == 0
+      ids = find_ids_in(GoogleCustomSearch, tweet, author)
+    end
+
+    ids
+  end
+
+  def find_ids_in(engine, tweet, author)
     ids = nil
 
-    GoogleAjaxSearch.new.start do |engine|
+    engine.new.start do |engine|
       # 検索ワードは32語に制限されているので適当に短く
       text = tweet[0, 45]
       ids = search(engine, text, author)
