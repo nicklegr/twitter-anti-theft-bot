@@ -1,5 +1,11 @@
 #!ruby -Ku
 
+require 'net/https'
+require 'cgi'
+require 'uri'
+require 'json'
+require 'yaml'
+
 module SearchEngine
   def initialize
     @https = Net::HTTP.new(domain(), 443)
@@ -32,7 +38,7 @@ class GoogleAjaxSearch
     response = @https.request_get(path, headers)
 
     data = JSON.parse(response.body)
-    puts JSON.pretty_generate(data)
+    # puts JSON.pretty_generate(data)
 
     if data['responseStatus'] != 200
       msg = "search failed"
@@ -54,5 +60,37 @@ class GoogleAjaxSearch
     end
 
     urls
+  end
+end
+
+class GoogleCustomSearch
+  include SearchEngine
+
+  def initialize
+    super
+
+    config = YAML.load_file("config.yaml")['google_api']
+    @api_key = config['key']
+    @cse_id = config['cse_id']
+  end
+
+  def domain
+    'www.googleapis.com'
+  end
+
+  def query(phrase)
+    path = "/customsearch/v1?key=#{@api_key}&cx=#{@cse_id}&q=#{URI.encode(phrase)}&hl=ja"
+    response = @https.request_get(path)
+
+    data = JSON.parse(response.body)
+    # puts JSON.pretty_generate(data)
+
+    # @todo ステータスコード, Rate limitチェック
+
+    # @todo 例外？
+    return [] if !data
+    return [] if !data['items']
+
+    data['items'].map do |entry| entry['link'] end
   end
 end

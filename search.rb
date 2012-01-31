@@ -1,9 +1,5 @@
 #!ruby -Ku
 
-require 'net/https'
-require 'cgi'
-require 'uri'
-require 'json'
 require './search_engine'
 
 class Search
