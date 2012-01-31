@@ -41,11 +41,15 @@ class Search
     urls = Array.new
 
     # @todo 発言内容がRT, QTを含まないなら、-RT -QTするといい
-    query = "#{text} twitter.com/#{author} site:twitter.com"
+    query = "#{text} site:twitter.com"
+    query += " twitter.com/#{author}" if author
+
     # puts query
     urls += send_query(connection, query)
 
-    query = "#{text} #{author} site:favstar.fm"
+    query = "#{text} site:favstar.fm"
+    query += " #{author}" if author
+
     # puts query
     urls += send_query(connection, query)
 
@@ -59,7 +63,7 @@ class Search
         id = $3
         # puts user, id
 
-        if user.downcase == author.downcase
+        if !author || user.downcase == author.downcase
           ids << id
         end
       end
@@ -69,7 +73,7 @@ class Search
         id = $2
         # puts user, id
 
-        if user.downcase == author.downcase
+        if !author || user.downcase == author.downcase
           ids << id
         end
       end

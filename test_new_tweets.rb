@@ -2,7 +2,7 @@
 
 # 指定したbotの最新のツイートを検索するテスト
 
-TEST_BOT_NAME = '1000favs'
+TEST_BOT_NAME = '100favs'
 
 require 'twitter'
 require 'yaml'

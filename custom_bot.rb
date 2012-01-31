@@ -14,3 +14,12 @@ class BotAccountLast
     end
   end
 end
+
+# アカウント名を入れていないタイプ
+class BotNoAccount
+  include Bot
+
+  def parse_tweet(tweet)
+    [tweet, nil]
+  end
+end
