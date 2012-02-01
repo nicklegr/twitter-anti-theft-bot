@@ -22,7 +22,11 @@ Twitter.user_timeline(bot.target).each do |status|
   print "tweet #{status.id} => "
 
   original_id = bot.find_original_id(status)
-  next if !original_id
 
-  puts "ok: #{original_id}"
+  if original_id
+    puts "ok: #{original_id}"
+  end
+
+  # GoogleのRate limit対策
+  sleep 10
 end
