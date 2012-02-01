@@ -43,16 +43,17 @@ class Search
     urls = Array.new
 
     # @todo 発言内容がRT, QTを含まないなら、-RT -QTするといい
+    # @todo テキストを "" でくくるとヒットする場合がある
     query = "#{text} site:twitter.com -#{copy_user}"
     query += " twitter.com/#{author}" if author
-
     # puts query
+
     urls += engine.query(query)
 
     query = "#{text} site:favstar.fm -#{copy_user}"
     query += " #{author}" if author
-
     # puts query
+
     urls += engine.query(query)
 
     # ツイートIDを抽出
@@ -60,19 +61,9 @@ class Search
     ids = Array.new
 
     urls.each do |url|
-      if url.match(%r|twitter.com/(\w+)/status(es)?/(\d+)|)
-        user = $1
-        id = $3
-        # puts user, id
+      # puts url
 
-        if user.downcase != copy_user.downcase
-          if !author || user.downcase == author.downcase
-            ids << id
-          end
-        end
-      end
-
-      if url.match(%r|favstar.fm/users/(\w+)/status/(\d+)|)
+      if url.match(%r|twitter\.com(?:.*)/(\w+)/status(?:es)?/(\d+)|)
         user = $1
         id = $2
         # puts user, id
@@ -84,7 +75,19 @@ class Search
         end
       end
 
-      if url.match(%r|favstar.fm/t/(\d+)|)
+      if url.match(%r|favstar\.fm/users/(\w+)/status/(\d+)|)
+        user = $1
+        id = $2
+        # puts user, id
+
+        if user.downcase != copy_user.downcase
+          if !author || user.downcase == author.downcase
+            ids << id
+          end
+        end
+      end
+
+      if url.match(%r|favstar\.fm/t/(\d+)|)
         id = $1
         ids << id
       end
