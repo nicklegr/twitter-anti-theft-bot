@@ -16,7 +16,8 @@ class Tweet
 
     statuses = ids.map do |id|
       begin
-        Twitter.status(id)
+        status = Twitter.status(id)
+        status.retweeted_status || status
       rescue Twitter::Error::NotFound
         # puts "tweet #{id} deleted"
         nil
