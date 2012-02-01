@@ -40,15 +40,16 @@ module Bot
     end
 
     text, original_user = ret
+    copy_user = status.user.screen_name
 
     # @todo 検索は時間がかかるので、非同期にするべき
-    ids = Search.new.find_ids(text, original_user)
+    ids = Search.new.find_ids(text, original_user, copy_user)
     if ids.size == 0
       puts "#{@target}: search not found: #{status.id} #{original_user} #{text}"
       return nil
     end
 
-    original_id = Tweet.new.estimate_original(text, original_user, ids)
+    original_id = Tweet.new.estimate_original(text, original_user, ids, copy_user)
     if !original_id
       puts "#{@target}: no original found: #{status.id} #{original_user} #{text}"
       return nil
