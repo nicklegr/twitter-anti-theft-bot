@@ -92,6 +92,7 @@ class Tweet
 
     # 改行コードなどもコピペ時に揺れがあるので削除
     str.gsub!(/\s+/, "")
+    str.gsub!(/\u00A0+/, "") # NO-BREAK SPACE
 
     # ハッシュタグは#だけ削除しているらしい
     str.gsub!(/#/, "")
