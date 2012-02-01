@@ -43,13 +43,13 @@ class Search
     urls = Array.new
 
     # @todo 発言内容がRT, QTを含まないなら、-RT -QTするといい
-    query = "#{text} site:twitter.com"
+    query = "#{text} site:twitter.com -#{copy_user}"
     query += " twitter.com/#{author}" if author
 
     # puts query
     urls += engine.query(query)
 
-    query = "#{text} site:favstar.fm"
+    query = "#{text} site:favstar.fm -#{copy_user}"
     query += " #{author}" if author
 
     # puts query
