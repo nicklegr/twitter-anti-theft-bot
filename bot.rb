@@ -49,7 +49,7 @@ module Bot
       return nil
     end
 
-    original_id = Tweet.new.estimate_original(text, original_user, ids, copy_user)
+    original_id = Tweet.new.estimate_original(text, ids, copy_user)
     if !original_id
       puts "#{@target}: no original found: #{status.id} #{original_user} #{text}"
       return nil

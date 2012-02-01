@@ -10,7 +10,7 @@ class String
 end
 
 class Tweet
-  def estimate_original(tweet, author, ids, copy_user)
+  def estimate_original(tweet, ids, copy_user)
     # API節約
     ids.sort!.uniq!
 
@@ -32,11 +32,6 @@ class Tweet
     end
 
     statuses.compact!
-    
-    if author
-      statuses.delete_if do |e| e.user.screen_name.downcase != author.downcase end
-    end
-
     statuses.delete_if do |e| e.user.screen_name.downcase == copy_user.downcase end
 
     # pp tweet
