@@ -17,4 +17,14 @@ config['bots'].each do |name, setting|
   watcher.add_bot(eval(setting['type']).new(setting))
 end
 
-watcher.start()
+loop do
+  begin
+    watcher.start()
+  rescue => e
+    # 不明なエラーのときも、とりあえず動き続ける
+    puts e.to_s
+  end
+
+  # @todo logスリープ
+  sleep 10
+end
