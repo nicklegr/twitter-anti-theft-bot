@@ -1,1 +1,1 @@
-worker: main.rb
+worker: bundle exec ruby main.rb
