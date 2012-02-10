@@ -37,13 +37,13 @@ class Watch
 
   def on_new_status(status)
     begin
-      puts "#{status.user.id} #{status.user.screen_name} #{status.text}"
-      # pp status
-
       # followは、その人への in-reply-to や retweet も飛んでくる
       # 本人の発言以外を除外
       bot = @bots.find {|e| e.target_id == status.user.id}
       return if !bot
+
+      # puts "#{status.user.id} #{status.user.screen_name} #{status.text}"
+      # pp status
 
       original_id = bot.find_original_id(status)
 

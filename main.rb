@@ -17,8 +17,6 @@ config['bots'].each do |name, setting|
   watcher.add_bot(eval(setting['type']).new(setting))
 end
 
-puts "bot started"
-
 loop do
   begin
     watcher.start()
