@@ -1,1 +1,1 @@
-git push heroku heroku:master
+git push -f heroku heroku:master
