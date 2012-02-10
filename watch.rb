@@ -57,6 +57,9 @@ class Watch
     rescue Twitter::Error::Forbidden => e
       # 鍵アカの場合かな
       puts e.to_s
+    rescue Timeout::Error => e
+      # httpのタイムアウト。検索で起きた場合はリトライしたいかも
+      puts e.to_s
     rescue => e
       # 不明なエラーのときも、とりあえず動き続ける
       puts e.to_s
