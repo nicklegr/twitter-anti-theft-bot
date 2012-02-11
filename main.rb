@@ -9,6 +9,8 @@ require './tweet'
 require './custom_bot'
 require './watch'
 
+$stdout.sync = true
+
 config = YAML.load_file("config.yaml")
 
 watcher = Watch.new(config['stream_account'])
