@@ -53,16 +53,20 @@ class Watch
       end
     rescue Twitter::Error::BadRequest => e
       # よくあるのはRate limit
-      puts e.to_s
+      puts "#{e} (#{e.class})"
+      puts e.backtrace
     rescue Twitter::Error::Forbidden => e
       # 鍵アカの場合かな
-      puts e.to_s
+      puts "#{e} (#{e.class})"
+      puts e.backtrace
     rescue Timeout::Error => e
       # httpのタイムアウト。検索で起きた場合はリトライしたいかも
-      puts e.to_s
+      puts "#{e} (#{e.class})"
+      puts e.backtrace
     rescue => e
       # 不明なエラーのときも、とりあえず動き続ける
-      puts e.to_s
+      puts "#{e} (#{e.class})"
+      puts e.backtrace
     end
   end
 end

@@ -24,7 +24,8 @@ loop do
     watcher.start()
   rescue => e
     # 不明なエラーのときも、とりあえず動き続ける
-    puts e.to_s
+    puts "#{e} (#{e.class})"
+    puts e.backtrace
   end
 
   # @todo logスリープ

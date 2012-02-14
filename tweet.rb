@@ -26,7 +26,8 @@ class Tweet
         nil
       rescue => e
         # とりあえず落ちないように
-        puts "tweet #{id}: #{e}"
+        puts "tweet #{id}: #{e} (#{e.class})"
+        puts e.backtrace
         nil
       end
     end
