@@ -82,7 +82,13 @@ module Bot
         break if retweets.nil? || retweets.empty?
 
         old_retweet = retweets.find do |status|
-          status.retweeted_status.id == id
+          # RTしたツイートの元ツイートが削除されると、非公式RTに変わって
+          # retweeted_statusがnilになる
+          if status.retweeted_status
+            status.retweeted_status.id == id
+          else
+            false
+          end
         end
 
         if old_retweet
