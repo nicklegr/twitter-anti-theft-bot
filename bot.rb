@@ -45,13 +45,13 @@ module Bot
     # @todo 検索は時間がかかるので、非同期にするべき
     ids = Search.new.find_ids(text, original_user, copy_user)
     if ids.size == 0
-      puts "#{@target}: search not found: #{status.id} #{original_user} #{text}"
+      warning "#{@target}: search not found: #{status.id} #{original_user} #{text}"
       return nil
     end
 
     original_id = Tweet.new.estimate_original(text, ids, copy_user)
     if !original_id
-      puts "#{@target}: no original found: #{status.id} #{original_user} #{text}"
+      warning "#{@target}: no original found: #{status.id} #{original_user} #{text}"
       return nil
     end
     
@@ -111,9 +111,27 @@ module Bot
         # 再度RT
         Twitter.retweet(id)
       else
-        puts "retweet failed: #{id}"
+        warning "retweet failed: #{id}"
       end
     end
+  end
+  
+  # ログに出力 + 管理者にDM送信
+  def warning(str)
+    puts str
+
+    yaml = YAML.load_file("config.yaml")
+    to = yaml['admin_account']
+
+    Twitter.configure do |config|
+      config.consumer_key = yaml['stream_account']['consumer_key']
+      config.consumer_secret = yaml['stream_account']['consumer_secret']
+      config.oauth_token = yaml['stream_account']['oauth_token']
+      config.oauth_token_secret = yaml['stream_account']['oauth_token_secret']
+    end
+
+    str = str[0, 140]
+    Twitter.direct_message_create(to, str)
   end
 
   attr_reader :target, :target_id
