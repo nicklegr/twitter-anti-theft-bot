@@ -2,11 +2,21 @@
 
 require 'uri'
 
-class String
-  def starts_with?(prefix)
-    prefix = prefix.to_s
-    self[0, prefix.length] == prefix
+# from http://d.hatena.ne.jp/kenkitii/20090204/ruby_levenshtein_distance
+def levenshtein_distance(str1, str2)
+  col, row = str1.size + 1, str2.size + 1
+  d = row.times.inject([]){|a, i| a << [0] * col }
+  col.times {|i| d[0][i] = i }
+  row.times {|i| d[i][0] = i }
+
+  str1.size.times do |i1|
+    str2.size.times do |i2|
+      cost = str1[i1] == str2[i2] ? 0 : 1
+      x, y = i1 + 1, i2 + 1
+      d[y][x] = [d[y][x-1]+1, d[y-1][x]+1, d[y-1][x-1]+cost].min
+    end
   end
+  d[str2.size][str1.size]
 end
 
 class Tweet
@@ -56,16 +66,18 @@ class Tweet
 
       # pp tweet.unpack('U*'), original_text.unpack('U*')
 
-      # 発言のマッチングルール
-      # 1. botの発言が、先頭一致で元発言に完全に含まれている
-      # 2. 一致率が高い(発言長の差が少ない)
+      # 発言のマッチングルール: 編集距離が、ツイート長と比較して少ない
       #
       # 140文字ジャストのツイートで、後ろを削ってアカウント名を入れたとして
-      # 140 * 0.8 = 112 -> アカウント名 27文字以内
-      # 140 * 0.9 = 126 -> アカウント名 13文字以内
-      rate = tweet.size.to_f / original_text.size
+      # 140 * 0.1 = 14 -> アカウント名 7文字以内
+      # 140 * 0.2 = 28 -> アカウント名 14文字以内
+      distance = levenshtein_distance(original_text, tweet)
+      distance_rate = distance.to_f / original_text.size
 
-      if original_text.starts_with?(tweet) && rate >= 0.8
+      # pp distance
+      # pp original_text.size
+
+      if distance_rate <= 0.2
         true
       else
         false
