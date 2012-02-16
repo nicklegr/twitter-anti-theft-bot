@@ -21,7 +21,8 @@ end
 module Bot
   def initialize(settings)
     @target = settings['target']
-    @target_id = settings['target_id']
+    @target_id = Twitter.user(@target).id
+
     @consumer_key = settings['consumer_key']
     @consumer_secret = settings['consumer_secret']
     @oauth_token = settings['oauth_token']
