@@ -2,7 +2,7 @@
 
 # 指定したbotの最新のツイートを検索するテスト
 
-TEST_BOT_NAME = '1000Retweets'
+TEST_BOT_NAME = 'omosiro_tweet'
 
 require 'twitter'
 require 'yaml'
