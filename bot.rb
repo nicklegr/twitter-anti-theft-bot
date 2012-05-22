@@ -38,7 +38,7 @@ module Bot
 
   def find_original_id(status)
     # 短縮URLはコピペポスト時に変更されるので、URLを除外
-    text = status.text.gsub(URI.regexp, "")
+    text = status.text.gsub(URI.regexp(['http', 'https']), "")
 
     # 末尾のユーザ名を分離する
     ret = parse_tweet(text)

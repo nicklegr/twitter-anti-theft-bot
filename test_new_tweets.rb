@@ -2,7 +2,7 @@
 
 # 指定したbotの最新のツイートを検索するテスト
 
-TEST_BOT_NAME = 'omosiro_tweet'
+TEST_BOT_NAME = 'together_meigen'
 
 require 'twitter'
 require 'yaml'
