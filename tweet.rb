@@ -23,6 +23,15 @@ end
 class Tweet
   def initialize
     @blacklist = BlackList.new
+
+    yaml = YAML.load_file("config.yaml")
+
+    Twitter.configure do |config|
+      config.consumer_key = yaml['stream_account']['consumer_key']
+      config.consumer_secret = yaml['stream_account']['consumer_secret']
+      config.oauth_token = yaml['stream_account']['oauth_token']
+      config.oauth_token_secret = yaml['stream_account']['oauth_token_secret']
+    end
   end
 
   def estimate_original(tweet, ids, copy_user)

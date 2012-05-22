@@ -20,13 +20,20 @@ end
 #
 module Bot
   def initialize(settings)
-    @target = settings['target']
-    @target_id = Twitter.user(@target).id
-
     @consumer_key = settings['consumer_key']
     @consumer_secret = settings['consumer_secret']
     @oauth_token = settings['oauth_token']
     @oauth_token_secret = settings['oauth_token_secret']
+
+    Twitter.configure do |config|
+      config.consumer_key = @consumer_key
+      config.consumer_secret = @consumer_secret
+      config.oauth_token = @oauth_token
+      config.oauth_token_secret = @oauth_token_secret
+    end
+
+    @target = settings['target']
+    @target_id = Twitter.user(@target).id
   end
 
   def find_original_id(status)
