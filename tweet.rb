@@ -1,6 +1,7 @@
 #!ruby -Ku
 
 require 'uri'
+require './blacklist'
 
 # from http://d.hatena.ne.jp/kenkitii/20090204/ruby_levenshtein_distance
 def levenshtein_distance(str1, str2)
@@ -20,6 +21,10 @@ def levenshtein_distance(str1, str2)
 end
 
 class Tweet
+  def initialize
+    @blacklist = BlackList.new
+  end
+
   def estimate_original(tweet, ids, copy_user)
     # API節約
     ids.sort!.uniq!
@@ -44,6 +49,7 @@ class Tweet
 
     statuses.compact!
     statuses.delete_if do |e| e.user.screen_name.downcase == copy_user.downcase end
+    statuses.delete_if do |e| @blacklist.black_user?(e.user.screen_name.downcase) end
 
     # pp tweet
     #

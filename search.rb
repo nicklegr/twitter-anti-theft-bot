@@ -1,8 +1,13 @@
 #!ruby -Ku
 
 require './search_engine'
+require './blacklist'
 
 class Search
+  def initialize
+    @blacklist = BlackList.new
+  end
+
   def find_ids(tweet, author, copy_user)
     ids = find_ids_in(GoogleAjaxSearch, tweet, author, copy_user)
 
@@ -41,6 +46,11 @@ class Search
 
   def search(engine, text, author, copy_user)
     urls = Array.new
+
+    # 作者がブラックリストに載っていたら、作者不明として検索
+    if @blacklist.black_user?(author)
+      author = nil
+    end
 
     # @todo 発言内容がRT, QTを含まないなら、-RT -QTするといい
     # @todo テキストを "" でくくるとヒットする場合がある
